@@ -1,2 +1,9 @@
-const inquirer = require('inquirer');
-const mysql = require('mysql2');
+const inquirer = require("inquirer");
+const db = require("./db/connection");
+
+const start = () => {
+  return inquirer.
+    prompt([]);
+};
+
+start();

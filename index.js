@@ -1,7 +1,7 @@
 const inquirer = require("inquirer");
-const db = require('./db/connection')
-const cTable = require('console.table');
- 
+const db = require("./db/connection");
+const cTable = require("console.table");
+const res = require("express/lib/response");
 
 const init = () => {
   return inquirer.prompt([
@@ -22,26 +22,45 @@ const init = () => {
   ]);
 };
 
+const addRow = () => {
+  return inquirer.prompt([
+    {
+      name: "departmentName",
+      message: "What is the department name you would like to add?",
+      type: "input",
+    },
+  ])
+  .then(newDepartmentName=>{
+    db.query(`INSERT INTO department(department_name) VALUES ('${newDepartmentName.departmentName}')`, (err,table)=>{
+      console.table(table);
+    })
+    // .then(init());
+  })
+};
 // db.query(`Select * FROM department`, (err,rows)=>{
 //   console.table(rows)
 // })
 
-
-
-init()
-.then(whatToDo =>{
-    // console.log(whatToDo.whatToDo);
-  switch (whatToDo.whatToDo){
-    case 'View all departments':
-      db.query(`Select * FROM department`, (err,rows)=>{
+init().then((whatToDo) => {
+  // console.log(whatToDo.whatToDo);
+  switch (whatToDo.whatToDo) {
+    case "View all departments":
+      db.query(`Select * FROM department`, (err, rows) => {
         console.table(rows);
-      })
+      });
       break;
-    case 'View all roles':
-      db.query(`Select * FROM roles`, (err,rows)=>{
+    case "View all roles":
+      db.query(`Select * FROM roles`, (err, rows) => {
         console.table(rows);
-      })
+      });
+      break;
+    case "View all employees":
+      db.query(`Select * FROM employee`, (err, rows) => {
+        console.table(rows);
+      });
+      break;
+    case "Add a department":
+        addRow();
       break;
   }
-})
-.then(init())
+});

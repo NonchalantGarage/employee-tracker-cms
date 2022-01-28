@@ -38,7 +38,7 @@ const addDepartmentRow = () => {
           console.table(table);
         }
       );
-      // .then(init());
+      return;
     });
 };
 const addRoleRow = () => {
@@ -61,12 +61,11 @@ const addRoleRow = () => {
       },
     ])
     .then((newRole) => {
+      // console.log(newRole)
       db.query(
-        `INSERT INTO roles(title, salary, department_id) VALUES ('${
-          (newRole.roleTitle, newRole.roleSalary, newRole.roleDept)
-        }')`,
-        (err, table) => {
-          console.table(table);
+        `INSERT INTO roles(title, salary, department_id) VALUES ('${newRole.roleTitle}','${newRole.roleSalary}','${newRole.roleDept}')`,
+        (err, result) => {
+          console.table(result);
         }
       );
       // .then(init());
@@ -91,21 +90,15 @@ const addEmployeeRow = () => {
         type: "input",
       },
       {
-        name: "eeRoleId",
-        message: "Please enter the employee role id",
-        type: "input",
-      },
-      {
         name: "eeManagerId",
         message: "Please enter the employee's managers role id",
         type: "input",
       },
     ])
-    .then((newRole) => {
+    .then((newEmployee) => {
       db.query(
-        `INSERT INTO roles(title, salary, department_id) VALUES ('${
-          (newRole.roleTitle, newRole.roleSalary, newRole.roleDept)
-        }')`,
+        `INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES ('${newEmployee.eeFirstName}', '${newEmployee.eeLastName}', '${newEmployee.eeRoleId}','${newEmployee.eeManagerId}')
+        `,
         (err, table) => {
           console.table(table);
         }
@@ -113,6 +106,8 @@ const addEmployeeRow = () => {
       // .then(init());
     });
 };
+
+
 // db.query(`Select * FROM department`, (err,rows)=>{
 //   console.table(rows)
 // })
@@ -124,12 +119,12 @@ init().then((whatToDo) => {
       db.query(`Select * FROM department`, (err, rows) => {
         console.table(rows);
       });
-      break;
+      return;
     case "View all roles":
       db.query(`Select * FROM roles`, (err, rows) => {
         console.table(rows);
       });
-      break;
+      return;
     case "View all employees":
       db.query(`Select * FROM employee`, (err, rows) => {
         console.table(rows);
@@ -141,8 +136,7 @@ init().then((whatToDo) => {
     case "Add a role":
       addRoleRow();
       break;
-  
-    case "Add an Employee":
+    case "Add an employee":
       addEmployeeRow();
       break;
     case "Update an employee role":

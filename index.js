@@ -22,20 +22,96 @@ const init = () => {
   ]);
 };
 
-const addRow = () => {
-  return inquirer.prompt([
-    {
-      name: "departmentName",
-      message: "What is the department name you would like to add?",
-      type: "input",
-    },
-  ])
-  .then(newDepartmentName=>{
-    db.query(`INSERT INTO department(department_name) VALUES ('${newDepartmentName.departmentName}')`, (err,table)=>{
-      console.table(table);
-    })
-    // .then(init());
-  })
+const addDepartmentRow = () => {
+  return inquirer
+    .prompt([
+      {
+        name: "departmentName",
+        message: "What is the department name you would like to add?",
+        type: "input",
+      },
+    ])
+    .then((newDepartmentName) => {
+      db.query(
+        `INSERT INTO department(department_name) VALUES ('${newDepartmentName.departmentName}')`,
+        (err, table) => {
+          console.table(table);
+        }
+      );
+      // .then(init());
+    });
+};
+const addRoleRow = () => {
+  return inquirer
+    .prompt([
+      {
+        name: "roleTitle",
+        message: "Please enter the role title",
+        type: "input",
+      },
+      {
+        name: "roleSalary",
+        message: "Please enter the role salary",
+        type: "input",
+      },
+      {
+        name: "roleDept",
+        message: "Please enter the role department id",
+        type: "input",
+      },
+    ])
+    .then((newRole) => {
+      db.query(
+        `INSERT INTO roles(title, salary, department_id) VALUES ('${
+          (newRole.roleTitle, newRole.roleSalary, newRole.roleDept)
+        }')`,
+        (err, table) => {
+          console.table(table);
+        }
+      );
+      // .then(init());
+    });
+};
+const addEmployeeRow = () => {
+  return inquirer
+    .prompt([
+      {
+        name: "eeFirstName",
+        message: "Please enter the employee first name",
+        type: "input",
+      },
+      {
+        name: "eeLastName",
+        message: "Please enter the employee last name",
+        type: "input",
+      },
+      {
+        name: "eeRoleId",
+        message: "Please enter the employee role id",
+        type: "input",
+      },
+      {
+        name: "eeRoleId",
+        message: "Please enter the employee role id",
+        type: "input",
+      },
+      {
+        name: "eeManagerId",
+        message: "Please enter the employee's managers role id",
+        type: "input",
+      },
+    ])
+    .then((newRole) => {
+      db.query(
+        `INSERT INTO roles(title, salary, department_id) VALUES ('${
+          (newRole.roleTitle, newRole.roleSalary, newRole.roleDept)
+        }')`,
+        (err, table) => {
+          console.table(table);
+        }
+      );
+      // .then(init());
+    });
 };
 // db.query(`Select * FROM department`, (err,rows)=>{
 //   console.table(rows)
@@ -60,7 +136,17 @@ init().then((whatToDo) => {
       });
       break;
     case "Add a department":
-        addRow();
+      addDepartmentRow();
+      break;
+    case "Add a role":
+      addRoleRow();
+      break;
+  
+    case "Add an Employee":
+      addEmployeeRow();
+      break;
+    case "Update an employee role":
+      updateEmployee();
       break;
   }
 });

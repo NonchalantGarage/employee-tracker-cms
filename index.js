@@ -4,7 +4,7 @@ const cTable = require("console.table");
 const res = require("express/lib/response");
 
 const init = () => {
-  return inquirer.prompt([
+   inquirer.prompt([
     {
       name: "whatToDo",
       type: "list",
@@ -17,9 +17,52 @@ const init = () => {
         "Add a role",
         "Add an employee",
         "Update an employee role",
+        "Would you like to quit?",
       ],
     },
-  ]);
+  ])
+  .then((whatToDo) => {
+    // console.log(whatToDo.whatToDo);
+    switch (whatToDo.whatToDo) {
+      case "View all departments":
+        db.promise().query(`Select * FROM department`)
+        .then(([rows])=>{
+          console.table(rows)
+          init();
+        })
+        .catch(err=>{
+          console.log(err)
+        })
+        
+        return;
+      case "View all roles":
+        db.query(`Select * FROM roles`, (err, rows) => {
+          console.table(rows);
+          init();
+        });
+        return;
+      case "View all employees":
+        db.query(`Select * FROM employee`, (err, rows) => {
+          console.table(rows);
+          init();
+        });
+        break;
+      case "Add a department":
+        addDepartmentRow();
+        break;
+      case "Add a role":
+        addRoleRow();
+        break;
+      case "Add an employee":
+        addEmployeeRow();
+        break;
+      case "Update an employee role":
+        updateEmployee();
+        break;
+      case "Would you like to quit?":
+        process.exit(0);
+    }
+  });
 };
 
 const addDepartmentRow = () => {
@@ -35,10 +78,14 @@ const addDepartmentRow = () => {
       db.query(
         `INSERT INTO department(department_name) VALUES ('${newDepartmentName.departmentName}')`,
         (err, table) => {
+          if(err){
+            console.log(err)
+          }
           console.table(table);
+          init();
         }
       );
-      return;
+      ;
     });
 };
 const addRoleRow = () => {
@@ -61,14 +108,13 @@ const addRoleRow = () => {
       },
     ])
     .then((newRole) => {
-      // console.log(newRole)
       db.query(
         `INSERT INTO roles(title, salary, department_id) VALUES ('${newRole.roleTitle}','${newRole.roleSalary}','${newRole.roleDept}')`,
         (err, result) => {
           console.table(result);
+          init();
         }
       );
-      // .then(init());
     });
 };
 const addEmployeeRow = () => {
@@ -101,46 +147,45 @@ const addEmployeeRow = () => {
         `,
         (err, table) => {
           console.table(table);
+          init();
         }
       );
-      // .then(init());
+    });
+};
+const updateEmployee = () => {
+  return inquirer
+    .prompt([
+      {
+        name: "eeFirstName",
+        message: "Please enter the employee first name",
+        type: "input",
+      },
+      {
+        name: "eeLastName",
+        message: "Please enter the employee last name",
+        type: "input",
+      },
+      {
+        name: "eeRoleId",
+        message: "Please enter the employee role id",
+        type: "input",
+      },
+      {
+        name: "eeManagerId",
+        message: "Please enter the employee's managers role id",
+        type: "input",
+      },
+    ])
+    .then((newEmployee) => {
+      db.query(
+        `INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES ('${newEmployee.eeFirstName}', '${newEmployee.eeLastName}', '${newEmployee.eeRoleId}','${newEmployee.eeManagerId}')
+        `,
+        (err, table) => {
+          console.table(table);
+          init();
+        }
+      );
     });
 };
 
-
-// db.query(`Select * FROM department`, (err,rows)=>{
-//   console.table(rows)
-// })
-
-init().then((whatToDo) => {
-  // console.log(whatToDo.whatToDo);
-  switch (whatToDo.whatToDo) {
-    case "View all departments":
-      db.query(`Select * FROM department`, (err, rows) => {
-        console.table(rows);
-      });
-      return;
-    case "View all roles":
-      db.query(`Select * FROM roles`, (err, rows) => {
-        console.table(rows);
-      });
-      return;
-    case "View all employees":
-      db.query(`Select * FROM employee`, (err, rows) => {
-        console.table(rows);
-      });
-      break;
-    case "Add a department":
-      addDepartmentRow();
-      break;
-    case "Add a role":
-      addRoleRow();
-      break;
-    case "Add an employee":
-      addEmployeeRow();
-      break;
-    case "Update an employee role":
-      updateEmployee();
-      break;
-  }
-});
+init();

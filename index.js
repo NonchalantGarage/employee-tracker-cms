@@ -25,7 +25,9 @@ const init = () => {
     // console.log(whatToDo.whatToDo);
     switch (whatToDo.whatToDo) {
       case "View all departments":
-        db.promise().query(`Select * FROM department`)
+
+        
+        db.promise().query(`Select id AS 'Department ID', department_name AS 'Name' FROM departments`)
         .then(([rows])=>{
           console.table(rows)
           init();
@@ -36,13 +38,13 @@ const init = () => {
         
         return;
       case "View all roles":
-        db.query(`Select * FROM roles`, (err, rows) => {
+        db.query(`Select title AS 'Role', salary AS 'Salary' FROM roles`, (err, rows) => {
           console.table(rows);
           init();
         });
         return;
       case "View all employees":
-        db.query(`Select * FROM employee`, (err, rows) => {
+        db.query(`Select * FROM employees`, (err, rows) => {
           console.table(rows);
           init();
         });
@@ -76,7 +78,7 @@ const addDepartmentRow = () => {
     ])
     .then((newDepartmentName) => {
       db.query(
-        `INSERT INTO department(department_name) VALUES ('${newDepartmentName.departmentName}')`,
+        `INSERT INTO departments(department_name) VALUES ('${newDepartmentName.departmentName}')`,
         (err, table) => {
           if(err){
             console.log(err)
@@ -143,7 +145,7 @@ const addEmployeeRow = () => {
     ])
     .then((newEmployee) => {
       db.query(
-        `INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES ('${newEmployee.eeFirstName}', '${newEmployee.eeLastName}', '${newEmployee.eeRoleId}','${newEmployee.eeManagerId}')
+        `INSERT INTO employees(first_name, last_name, role_id, manager_id) VALUES ('${newEmployee.eeFirstName}', '${newEmployee.eeLastName}', '${newEmployee.eeRoleId}','${newEmployee.eeManagerId}')
         `,
         (err, table) => {
           console.table(table);
@@ -153,33 +155,27 @@ const addEmployeeRow = () => {
     });
 };
 const updateEmployee = () => {
-  return inquirer
+  db.query(`Select * FROM employees`, (err, rows) => {
+    console.table(rows)
+    }   
+  );
+
+   inquirer
     .prompt([
       {
-        name: "eeFirstName",
-        message: "Please enter the employee first name",
+        name: "whichEmployee",
+        message: "Please enter the employee id you would like to update",
         type: "input",
       },
       {
-        name: "eeLastName",
-        message: "Please enter the employee last name",
+        name: "whichRole",
+        message: "Please enter the employee role you would like to update to",
         type: "input",
-      },
-      {
-        name: "eeRoleId",
-        message: "Please enter the employee role id",
-        type: "input",
-      },
-      {
-        name: "eeManagerId",
-        message: "Please enter the employee's managers role id",
-        type: "input",
-      },
+      }
     ])
-    .then((newEmployee) => {
-      db.query(
-        `INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES ('${newEmployee.eeFirstName}', '${newEmployee.eeLastName}', '${newEmployee.eeRoleId}','${newEmployee.eeManagerId}')
-        `,
+    .then((newRole) => {
+      console.log(newRole)
+      db.query(`UPDATE employees SET role_id = '${newRole.whichRole}' WHERE id = '${newRole.whichEmployee}'`,
         (err, table) => {
           console.table(table);
           init();

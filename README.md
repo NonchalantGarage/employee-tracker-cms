@@ -15,6 +15,10 @@ npm i inquirer
 npm i mysql2
 ```
 
+## Video
+
+[Video Walkthrough](https://watch.screencastify.com/v/tbXT3SW6AxnKzkYa7UCH)
+
 ## Usage
 Start App
 

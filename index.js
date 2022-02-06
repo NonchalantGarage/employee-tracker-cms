@@ -1,7 +1,6 @@
 const inquirer = require("inquirer");
 const db = require("./db/connection");
 const cTable = require("console.table");
-const res = require("express/lib/response");
 
 const init = () => {
    inquirer.prompt([
